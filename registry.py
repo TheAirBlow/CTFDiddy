@@ -1,6 +1,7 @@
 import importlib.util
 import pathlib
 from typing import Dict, Type
+from basetypes import *
 
 class ProviderRegistry:
     def __init__(self, folder_path: str, base_class: Type):

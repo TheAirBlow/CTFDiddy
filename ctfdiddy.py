@@ -105,13 +105,14 @@ def download_mode():
     )
 
     s = requests.Session()
+    headers = board.get_headers()
 
     def _worker(url, index, task, dest: Path):
         tid = progress.add_task("download", filename=shorten(dest.name), status=f"{index + 1}/{len(queue)}", start=False)
         try:
             while True:
                 try:
-                    resp = s.get(url, stream=True, timeout=5)
+                    resp = s.get(url, headers=headers, stream=True, timeout=5)
                 except:
                     resp = None
 
@@ -127,6 +128,14 @@ def download_mode():
                     log.warning(f'Unexpected status code {resp.status_code} for "{url.split('?')[0]}" from task "{task}" ({index + 1}/{len(queue)})')
                     time.sleep(5)
                     continue
+
+                cd = resp.headers.get("Content-Disposition")
+                if cd:
+                    fname_match = re.findall('filename="?([^"]+)"?', cd)
+                    if fname_match:
+                        actual_filename = fname_match[0]
+                        dest = dest.parent / actual_filename
+                        progress.update(tid, filename=shorten(actual_filename))
 
                 length = int(resp.headers.get("content-length", 0))
                 progress.update(tid, total=length)

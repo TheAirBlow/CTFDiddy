@@ -1,6 +1,6 @@
 import requests
 from typing import List
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from basetypes import *
 
 class CTFdProvider(BoardProvider):
@@ -26,6 +26,9 @@ class CTFdProvider(BoardProvider):
             self.headers["Authorization"] = f"Token {args.token}"
         elif args.session:
             self.headers["Cookie"] = f"session={args.session}"
+
+    def get_headers(self) -> dict:
+        return self.headers
 
     def fetch_leaderboard(self) -> List[AccountInfo]:
         response = requests.get(f"{self.url}/api/v1/scoreboard", headers=self.headers)

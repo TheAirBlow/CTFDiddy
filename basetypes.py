@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
-from typing import Optional, List, TypeAlias
+from typing import Optional, List
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 @dataclass
 class FileInfo:
@@ -49,6 +49,10 @@ class BoardProvider(ABC):
 
     @abstractmethod
     def initialize(self, args: Namespace):
+        pass
+
+    @abstractmethod
+    def get_headers(self) -> dict:
         pass
 
     @abstractmethod
